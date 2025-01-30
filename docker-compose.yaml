@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   send2pbsync:
-    image: ghcr.io/dntsk/send2pbsync:latest
+    image: ghcr.io/dntsk/send2pbsync:master
     container_name: send2pbsync
     restart: on-failure:2
     environment:
