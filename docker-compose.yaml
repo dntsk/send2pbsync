@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  send2pbsync:
+    image: ghcr.io/dntsk/send2pbsync:latest
+    container_name: send2pbsync
+    restart: on-failure:2
+    environment:
+      - IMAP_SERVER=imap.gmail.com
+      - IMAP_USER=your-email@gmail.com
+      - IMAP_PASSWORD=your-imap-password
+      - SMTP_SERVER=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=your-email@gmail.com
+      - SMTP_PASSWORD=your-smtp-password
+      - SEND_TO_EMAIL=recipient-email@pbsync.com
+      - SMTP_USE_TLS=True
+      - SMTP_FROM_EMAIL=your-email@gmail.com
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    container_name: scheduler
+    depends_on:
+      - send2pbsync
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-run.send2pbsync.schedule: "@every 10m"
+      ofelia.job-run.send2pbsync.container: "send2pbsync"
